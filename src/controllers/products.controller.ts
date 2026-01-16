@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import * as productsService from "../services/products.service";
 import { getProductsSchema } from "../validators/products.validator";
-import { ZodError } from "zod";
 
 export const getProducts: RequestHandler = async (req, res) => {
   try {
@@ -16,9 +15,23 @@ export const getProducts: RequestHandler = async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    if (err instanceof ZodError) {
-      return res.status(400).json({ error: err, data: null });
-    }
+    res.status(500).json({
+      error: "Erro ao buscar produtos",
+      data: null,
+    });
+  }
+};
+
+export const getProduct: RequestHandler = async (req, res) => {
+  try {
+    const result = await productsService.getProduct(Number(req.params.slug));
+
+    return res.status(200).json({
+      error: null,
+      data: result.result,
+    });
+  } catch (err) {
+    console.error(err);
 
     res.status(500).json({
       error: "Erro ao buscar produtos",
