@@ -13,7 +13,7 @@ export const globalErrorHandler = (error: Error, req: Request, res: Response, ne
 
     if(error instanceof ZodError) {
         const errorMessage = error.issues.map((err) => err.message).join(', ')
-        res.status(200).json({error: errorMessage, data: null})
+        res.status(400).json({error: errorMessage, data: null})
         return
     }
 
