@@ -7,6 +7,7 @@ type GetProductsParams = {
   limit: number;
   search?: string;
   lastUpdateDate?: Date;
+  sortBy?: 'asc' | 'desc';
 };
 
 type InsertProductParams = {
@@ -42,6 +43,7 @@ export const getProducts = async ({
   limit,
   search,
   lastUpdateDate,
+  sortBy
 }: GetProductsParams) => {
   const offset = (Number(page) - 1) * Number(limit);
   const whereConditions: string[] = [];
@@ -104,7 +106,7 @@ export const getProducts = async ({
       cd_tipoitem
     FROM dbsisloc_tecnogera.dbo.equipto
     ${whereClause}
-    ORDER BY cd_equipto
+    ORDER BY cd_equipto ${sortBy?.toLowerCase()}
     OFFSET ${offset} ROWS
     FETCH NEXT ${limit} ROWS ONLY
   `);
