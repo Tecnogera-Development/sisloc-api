@@ -14,35 +14,33 @@ export const getProducts = async ({
   search,
   lastUpdateDate,
 }: GetProductsParams) => {
-  const offset = (Number(page) - 1) * Number(limit)
+  const offset = (Number(page) - 1) * Number(limit);
   const whereConditions: string[] = [];
-
-  const startDate = lastUpdateDate
-  ? new Date(lastUpdateDate.getFullYear(), lastUpdateDate.getMonth(), lastUpdateDate.getDate(), 0, 0, 0, 0)
-  : undefined;
-
-  if (search) {
-    whereConditions.push("nm_equipto LIKE @search");
-  }
-
-  if (lastUpdateDate) {
-    whereConditions.push(
-      "lad_upd_date >= @startDate"
-    );
-  }
-
-  const whereClause =
-    whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
 
   const request = db.request();
 
   if (search) {
+    whereConditions.push("nm_equipto LIKE @search");
     request.input("search", sql.VarChar, `${search}%`);
   }
 
   if (lastUpdateDate) {
+    const startDate = new Date(
+      lastUpdateDate.getFullYear(),
+      lastUpdateDate.getMonth(),
+      lastUpdateDate.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+
+    whereConditions.push("lad_upd_date >= @startDate");
     request.input("startDate", sql.DateTime2, startDate);
   }
+
+  const whereClause =
+    whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
 
   const result = await request.query(`
     SELECT
@@ -87,11 +85,10 @@ export const getProducts = async ({
   };
 };
 
-
 export const getProduct = async (cd_equipto: number) => {
   const request = db.request();
-  
-  request.input("id", sql.Int, cd_equipto)
+
+  request.input("id", sql.Int, cd_equipto);
 
   const result = await request.query(`
     SELECT
@@ -131,4 +128,4 @@ export const getProduct = async (cd_equipto: number) => {
   return {
     result: result.recordset,
   };
-}
+};
