@@ -12,7 +12,7 @@ export const getProductSchema = z.object({
 })
 
 export const addProductSchema = z.object({
-  nm_equipto: z.string().trim().min(1, "Campo não pode ser vazio").max(120),
+  nm_equipto: z.string().trim().min(1, "Campo não pode ser vazio").max(120, "Campo deve ter no máximo 120 caracteres"),
   vl_aqu_equipto: z.coerce.number(),
   cd_grupo: z.coerce.number().int(),
   cd_unidade: z.coerce.number().int(),
