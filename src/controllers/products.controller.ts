@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import * as productsService from "../services/products.service";
-import { getProductsSchema } from "../validators/products.validator";
+import { getProductSchema, getProductsSchema } from "../validators/products.validator";
 
 export const getProducts: RequestHandler = async (req, res) => {
   try {
@@ -24,7 +24,9 @@ export const getProducts: RequestHandler = async (req, res) => {
 
 export const getProduct: RequestHandler = async (req, res) => {
   try {
-    const result = await productsService.getProduct(Number(req.params.slug));
+    const data = getProductSchema.parse(req.params)
+
+    const result = await productsService.getProduct(data.slug);
 
     return res.status(200).json({
       error: null,

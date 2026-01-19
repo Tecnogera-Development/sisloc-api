@@ -6,3 +6,7 @@ export const getProductsSchema = z.object({
     search: z.string().optional(),
     lastUpdateDate: z.coerce.date().optional()
 })
+
+export const getProductSchema = z.object({
+    slug: z.coerce.number().int().positive(),
+})
