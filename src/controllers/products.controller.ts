@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import * as productsService from "../services/products.service";
-import { getProductSchema, getProductsSchema } from "../validators/products.validator";
+import { addProductSchema, getProductSchema, getProductsSchema } from "../validators/products.validator";
+import z from "zod";
 
 export const getProducts: RequestHandler = async (req, res) => {
   try {
@@ -41,3 +42,35 @@ export const getProduct: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const addProduct: RequestHandler = async (req, res) => {
+  try {
+    const data = addProductSchema.parse(req.body);
+
+    const result = await productsService.insertProduct(data);
+
+    res.status(201).json(result);
+
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Erro de validação",
+        errors: error,
+      });
+    }
+
+    if (error instanceof Error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    console.error("Erro ao adicionar produto:", error);
+    res.status(500).json({
+      success: false,
+      message: "Erro interno ao cadastrar produto",
+    });
+  }
+}

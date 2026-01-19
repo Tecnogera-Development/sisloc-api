@@ -7,4 +7,6 @@ router.get('/', productsController.getProducts)
 
 router.get('/:slug', productsController.getProduct)
 
+router.post('/', productsController.addProduct)
+
 export default router;
