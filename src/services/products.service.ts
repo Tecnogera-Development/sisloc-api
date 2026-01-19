@@ -5,7 +5,7 @@ type GetProductsParams = {
   page: number;
   limit: number;
   search?: string;
-  lastUpdateDate?: string;
+  lastUpdateDate?: Date;
 };
 
 export const getProducts = async ({
@@ -17,13 +17,17 @@ export const getProducts = async ({
   const offset = (Number(page) - 1) * Number(limit)
   const whereConditions: string[] = [];
 
+  const startDate = lastUpdateDate
+  ? new Date(lastUpdateDate.getFullYear(), lastUpdateDate.getMonth(), lastUpdateDate.getDate(), 0, 0, 0, 0)
+  : undefined;
+
   if (search) {
     whereConditions.push("nm_equipto LIKE @search");
   }
 
   if (lastUpdateDate) {
     whereConditions.push(
-      "CAST(lad_upd_date AS date) >= CAST(@lastUpdateDate AS date)"
+      "lad_upd_date >= @startDate"
     );
   }
 
@@ -37,7 +41,7 @@ export const getProducts = async ({
   }
 
   if (lastUpdateDate) {
-    request.input("lastUpdateDate", sql.Date, lastUpdateDate);
+    request.input("startDate", sql.DateTime2, startDate);
   }
 
   const result = await request.query(`
@@ -86,6 +90,8 @@ export const getProducts = async ({
 
 export const getProduct = async (cd_equipto: number) => {
   const request = db.request();
+  
+  request.input("id", sql.Int, cd_equipto)
 
   const result = await request.query(`
     SELECT
@@ -119,7 +125,7 @@ export const getProduct = async (cd_equipto: number) => {
       cd_usuarioalteracao_apv_equipto,
       cd_tipoitem
     FROM dbsisloc_tecnogera.dbo.equipto
-    WHERE cd_equipto = ${cd_equipto}
+    WHERE cd_equipto = @id
   `);
 
   return {
