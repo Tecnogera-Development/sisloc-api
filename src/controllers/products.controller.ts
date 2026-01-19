@@ -1,9 +1,8 @@
 import { RequestHandler } from "express";
 import * as productsService from "../services/products.service";
 import { addProductSchema, getProductSchema, getProductsSchema } from "../validators/products.validator";
-import z from "zod";
 
-export const getProducts: RequestHandler = async (req, res) => {
+export const getProducts: RequestHandler = async (req, res, next) => {
   try {
     const data = getProductsSchema.parse(req.query);
 
@@ -15,15 +14,11 @@ export const getProducts: RequestHandler = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-
-    res.status(500).json({
-      error: "Erro ao buscar produtos",
-      data: null,
-    });
+    next(err)
   }
 };
 
-export const getProduct: RequestHandler = async (req, res) => {
+export const getProduct: RequestHandler = async (req, res, next) => {
   try {
     const data = getProductSchema.parse(req.params)
 
@@ -35,15 +30,11 @@ export const getProduct: RequestHandler = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-
-    res.status(500).json({
-      error: "Erro ao buscar produtos",
-      data: null,
-    });
+    next(err)
   }
 };
 
-export const addProduct: RequestHandler = async (req, res) => {
+export const addProduct: RequestHandler = async (req, res, next) => {
   try {
     const data = addProductSchema.parse(req.body);
 
@@ -52,25 +43,8 @@ export const addProduct: RequestHandler = async (req, res) => {
     res.status(201).json(result);
 
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        message: "Erro de validação",
-        errors: error,
-      });
-    }
-
-    if (error instanceof Error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
 
     console.error("Erro ao adicionar produto:", error);
-    res.status(500).json({
-      success: false,
-      message: "Erro interno ao cadastrar produto",
-    });
+    next(error)
   }
 }
