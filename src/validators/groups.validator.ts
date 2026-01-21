@@ -9,3 +9,8 @@ export const getGroupsSchema = z.object({
 export const getGroupSchema = z.object({
     slug: z.coerce.number().int().positive(),
 })
+
+export const putGroupsSchema = z.object({
+    nm_grupo: z.string().min(1, "Nome do grupo é obrigatório").toUpperCase().optional(),
+    fl_ativo: z.boolean().optional()
+})

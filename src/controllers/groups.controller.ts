@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import * as groupsService from "../services/groups.service";
-import { getGroupSchema, getGroupsSchema } from "../validators/groups.validator";
+import { getGroupSchema, getGroupsSchema, putGroupsSchema } from "../validators/groups.validator";
 
 export const getGroups: RequestHandler = async (req, res, next) => {
   try {
@@ -33,3 +33,16 @@ export const getGroup: RequestHandler = async (req, res, next) => {
     next(err)
   }
 };
+
+export const putGroup: RequestHandler = async (req, res, next) => {
+  try {
+    const data = putGroupsSchema.parse(req.body)
+
+    const result = await groupsService.putGroup(data, Number(req.params.slug));
+
+    return res.status(204).json({});
+  } catch (err) {
+    console.error(err);
+    next(err)
+  }
+}
