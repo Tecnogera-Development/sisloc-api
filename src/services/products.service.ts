@@ -1,6 +1,7 @@
 import { db } from "../db/connection";
 import sql from "mssql";
 import { AppError } from "../utils/apperror";
+import { parseBooleanRows } from "../utils/parseBoolean";
 
 type GetProductsParams = {
   page: number;
@@ -114,6 +115,8 @@ export const getProducts = async ({
     FETCH NEXT ${limit} ROWS ONLY
   `);
 
+  parseBooleanRows(result.recordset)
+
   return {
     result: result.recordset,
   };
@@ -161,6 +164,8 @@ export const getProduct = async (cd_equipto: number) => {
     FROM dbsisloc_tecnogera.dbo.equipto
     WHERE cd_equipto = @id
   `);
+
+  parseBooleanRows(result.recordset)
 
   return {
     result: result.recordset,
