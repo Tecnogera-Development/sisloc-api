@@ -7,6 +7,8 @@ router.get('/', groupsController.getGroups)
 
 router.get('/:slug', groupsController.getGroup)
 
+router.post('/', groupsController.postGroup)
+
 router.put('/:slug', groupsController.putGroup)
 
 export default router;
