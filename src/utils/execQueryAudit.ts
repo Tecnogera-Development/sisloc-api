@@ -22,7 +22,7 @@ export const execWithAuditTx = async (
         (SELECT TOP 1 id_trans
         FROM @Inserted);
 
-        DECLARE @user VARCHAR(16) = 'SALESFORCE-API';
+        DECLARE @user CHAR(16) = 'SALESFORCE-API';
 
         DECLARE @ctx VARBINARY(128) = Cast(@id_trans AS BINARY(4))
         + Cast(0x00000000 AS BINARY(4))
